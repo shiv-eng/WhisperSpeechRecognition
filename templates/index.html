@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Speech Recognition Notes</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        #startRecording, #stopRecording, #refreshNotes {
+            padding: 10px 20px;
+            font-size: 16px;
+            margin: 10px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+
+        #notesList {
+            margin-top: 20px;
+        }
+
+        .note {
+            margin: 5px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+</head>
+<body>
+    <h1>Speech Recognition Notes</h1>
+
+    <button id="startRecording">Start Recording</button>
+    <button id="stopRecording" style="display: none;">Stop Recording</button>
+    <button id="refreshNotes">Refresh Notes</button>
+
+    <div id="notesList">
+        <!-- Notes will be displayed here -->
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            var recognition = new webkitSpeechRecognition();
+            recognition.continuous = true;
+
+            $('#startRecording').on('click', function() {
+                recognition.start();
+                $('#startRecording').hide();
+                $('#stopRecording').show();
+            });
+
+            $('#stopRecording').on('click', function() {
+                recognition.stop();
+                $('#stopRecording').hide();
+                $('#startRecording').show();
+            });
+
+            recognition.onresult = function(event) {
+                var last = event.results.length - 1;
+                var text = event.results[last][0].transcript;
+                var timestamp = new Date().toLocaleString(); // Get current timestamp
+                console.log('Recognized Text:', text);
+
+                // Display the recognized text and timestamp on the page
+                var noteItem = $('<div class="note">').text(text + ' - ' + timestamp);
+                $('#notesList').append(noteItem);
+            };
+        });
+    </script>
+</body>
+</html>
